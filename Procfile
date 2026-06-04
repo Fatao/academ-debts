@@ -1,0 +1,1 @@
+web: php artisan migrate:fresh --seed && php -S 0.0.0.0:$PORT -t public
