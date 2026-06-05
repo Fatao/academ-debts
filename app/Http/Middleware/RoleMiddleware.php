@@ -17,9 +17,9 @@ class RoleMiddleware
 
         foreach ($roles as $role) {
             if ($role === 'admin'   && $user->isAdmin())   return $next($request);
-            if ($role === 'dean'    && $user->isDean())    return $next($request);
-            if ($role === 'teacher' && $user->isTeacher()) return $next($request);
-            if ($role === 'student' && $user->isStudent()) return $next($request);
+            if ($role === 'moderator'    && $user->isModerator())    return $next($request);
+            if ($role === 'jobgiver' && $user->isJobgiver()) return $next($request);
+            if ($role === 'freelancer' && $user->isFreelancer()) return $next($request);
         }
 
         abort(403, 'Доступ запрещён.');
