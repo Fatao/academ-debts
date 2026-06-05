@@ -44,14 +44,14 @@ class Retake extends Model
         return $this->belongsTo(User::class, 'created_by_id');
     }
 
-    public function teachers()
+    public function jobgivers()
     {
-        return $this->belongsToMany(User::class, 'retake_teachers', 'retake_id', 'teacher_id');
+        return $this->belongsToMany(User::class, 'retake_jobgivers', 'retake_id', 'jobgiver_id');
     }
 
-    public function students()
+    public function freelancers()
     {
-        return $this->belongsToMany(User::class, 'retake_students', 'retake_id', 'student_id')
+        return $this->belongsToMany(User::class, 'retake_freelancers', 'retake_id', 'freelancer_id')
                     ->withPivot('result_status', 'grade_value', 'grade_scale', 'updated_by_id', 'updated_at');
     }
 
