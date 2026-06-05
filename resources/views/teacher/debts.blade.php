@@ -1,10 +1,10 @@
 @extends('layouts.app')
 
-@section('title', 'Задолженности по моим дисциплинам')
-@section('page-title', 'Задолженности по моим дисциплинам')
+@section('title', 'Мои заказы')
+@section('page-title', 'Мои заказы')
 
 @section('page-actions')
-    <a href="{{ route('teacher.debts.create') }}" class="btn btn-primary btn-sm">Выставить задолженность</a>
+    <a href="{{ route('jobgiver.debts.create') }}" class="btn btn-primary btn-sm">Выставить заказ</a>
 @endsection
 
 @section('content')
@@ -14,15 +14,15 @@
 @endif
 
 @if($debts->isEmpty())
-    <div class="alert alert-info">Задолженностей нет.</div>
+    <div class="alert alert-info">Заказов нет.</div>
 @else
     <table class="table table-bordered table-striped table-hover">
         <thead>
             <tr>
                 <th>#</th>
-                <th>Студент</th>
+                <th>Фрилансер</th>
                 <th>Группа</th>
-                <th>Дисциплина</th>
+                <th>Заказ</th>
                 <th>Статус</th>
                 <th>Оценка</th>
                 <th>Дата</th>
@@ -33,8 +33,8 @@
             @foreach($debts as $i => $debt)
             <tr>
                 <td>{{ $i + 1 }}</td>
-                <td>{{ $debt->student->fullName() }}</td>
-                <td>{{ $debt->student->group->name ?? '—' }}</td>
+                <td>{{ $debt->freelancer->fullName() }}</td>
+                <td>{{ $debt->freelancer->group->name ?? '—' }}</td>
                 <td>{{ $debt->discipline->name }}</td>
                 <td>
                     @if($debt->isOpen())
@@ -57,14 +57,14 @@
                             <div class="modal-dialog">
                                 <div class="modal-content">
                                     <div class="modal-header">
-                                        <h6 class="modal-title">Закрыть задолженность</h6>
+                                        <h6 class="modal-title">Закрыть заказ</h6>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                     </div>
-                                    <form method="POST" action="{{ route('teacher.debts.close', $debt) }}">
+                                    <form method="POST" action="{{ route('jobgiver.debts.close', $debt) }}">
                                         @csrf
                                         <div class="modal-body">
                                             <p class="mb-3">
-                                                <strong>{{ $debt->student->fullName() }}</strong><br>
+                                                <strong>{{ $debt->freelancer->fullName() }}</strong><br>
                                                 <span class="text-muted">{{ $debt->discipline->name }}</span>
                                             </p>
 
