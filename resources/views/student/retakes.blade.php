@@ -1,20 +1,20 @@
 @extends('layouts.app')
 
-@section('title', 'Мои пересдачи')
-@section('page-title', 'Мои пересдачи')
+@section('title', 'Мои заказы')
+@section('page-title', 'Мои заказы')
 
 @section('content')
 @if($retakes->isEmpty())
-    <div class="alert alert-info">Пересдачи не назначены.</div>
+    <div class="alert alert-info">Заказы не назначены.</div>
 @else
     <table class="table table-bordered table-striped table-hover">
         <thead>
             <tr>
-                <th>Дисциплина</th>
+                <th>Заказ</th>
                 <th>Дата и время</th>
                 <th>Место</th>
                 <th>Тип</th>
-                <th>Преподаватели</th>
+                <th>Заказчик</th>
                 <th>Статус</th>
                 <th>Результат</th>
                 <th>Оценка</th>
@@ -28,8 +28,8 @@
                 <td>{{ $retake->location() }}</td>
                 <td>{{ $retake->typeLabel() }}</td>
                 <td>
-                    @foreach($retake->teachers as $teacher)
-                        <div>{{ $teacher->shortName() }}</div>
+                    @foreach($retake->jobgivers as $jobgiver)
+                        <div>{{ $jobgiver->shortName() }}</div>
                     @endforeach
                 </td>
                 <td><span class="badge bg-secondary">{{ $retake->statusLabel() }}</span></td>
