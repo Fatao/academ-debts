@@ -26,28 +26,28 @@
                 @if($user->is_admin)
                     <span class="badge bg-dark">Администратор</span>
                 @endif
-                @if($user->is_dean)
-                    <span class="badge bg-primary">Деканат</span>
+                @if($user->is_moderator)
+                    <span class="badge bg-primary">Модератор</span>
                 @endif
-                @if($user->is_teacher)
-                    <span class="badge bg-info text-dark">Преподаватель</span>
+                @if($user->is_jobgiver)
+                    <span class="badge bg-info text-dark">Заказчик</span>
                 @endif
-                @if($user->isStudent())
-                    <span class="badge bg-secondary">Студент</span>
+                @if($user->isFreelancer())
+                    <span class="badge bg-secondary">Фрилансер</span>
                 @endif
             </td>
             <td>
                 @if(!$user->isAdmin())
-                    <form method="POST" action="{{ route('admin.users.toggle-dean', $user) }}" class="d-inline">
+                    <form method="POST" action="{{ route('admin.users.toggle-moderator', $user) }}" class="d-inline">
                         @csrf
-                        <button type="submit" class="btn btn-sm {{ $user->is_dean ? 'btn-outline-danger' : 'btn-outline-primary' }}">
-                            {{ $user->is_dean ? 'Снять деканат' : 'Назначить деканат' }}
+                        <button type="submit" class="btn btn-sm {{ $user->is_moderator ? 'btn-outline-danger' : 'btn-outline-primary' }}">
+                            {{ $user->is_moderator ? 'Снять деканат' : 'Назначить модератора' }}
                         </button>
                     </form>
-                    <form method="POST" action="{{ route('admin.users.toggle-teacher', $user) }}" class="d-inline">
+                    <form method="POST" action="{{ route('admin.users.toggle-jobgiver', $user) }}" class="d-inline">
                         @csrf
-                        <button type="submit" class="btn btn-sm {{ $user->is_teacher ? 'btn-outline-danger' : 'btn-outline-info' }}">
-                            {{ $user->is_teacher ? 'Снять преподавателя' : 'Назначить преподавателем' }}
+                        <button type="submit" class="btn btn-sm {{ $user->is_jobgiver ? 'btn-outline-danger' : 'btn-outline-info' }}">
+                            {{ $user->is_jobgiver ? 'Снять преподавателя' : 'Назначить заказчиком' }}
                         </button>
                     </form>
                 @else
