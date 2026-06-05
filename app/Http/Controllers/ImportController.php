@@ -10,11 +10,11 @@ class ImportController extends Controller
 {
     public function showForm()
     {
-        return view('dean.import');
+        return view('moderator.import');
     }
 
-    // Import students from CSV
-    public function importStudents(Request $request)
+    // Import freelancers from CSV
+    public function importFreelancers(Request $request)
     {
         $request->validate([
             'file' => ['required', 'file', 'mimes:csv,txt', 'max:2048'],
@@ -60,7 +60,7 @@ class ImportController extends Controller
                 'first_name'  => trim($firstName),
                 'middle_name' => trim($middleName),
                 'email'       => $email,
-                'password'    => Hash::make('student123'),
+                'password'    => Hash::make('freelancer123'),
                 'group_id'    => $group?->id,
             ]);
 
@@ -97,11 +97,11 @@ class ImportController extends Controller
             if (count($row) < 3) continue;
 
             // Expected: Email студента;Код дисциплины;Название дисциплины;Email преподавателя
-            [$studentEmail, $discCode, $discName, $teacherEmail] = array_pad($row, 4, '');
+            [$freelancerEmail, $discCode, $discName, $jobgiverEmail] = array_pad($row, 4, '');
 
-            $student = User::where('email', trim($studentEmail))->first();
-            if (!$student) {
-                $errors[] = "Студент не найден: {$studentEmail}";
+            $freelancer = User::where('email', trim($freelancerEmail))->first();
+            if (!$freelancer) {
+                $errors[] = "Студент не найден: {$freelancerEmail}";
                 $skipped++;
                 continue;
             }
@@ -111,15 +111,15 @@ class ImportController extends Controller
                 ['name' => trim($discName) ?: trim($discCode)]
             );
 
-            $teacher = User::where('email', trim($teacherEmail))->first();
-            if (!$teacher) {
-                $errors[] = "Преподаватель не найден: {$teacherEmail}";
+            $jobgiver = User::where('email', trim($jobgiverEmail))->first();
+            if (!$jobgiver) {
+                $errors[] = "Преподаватель не найден: {$jobgiverEmail}";
                 $skipped++;
                 continue;
             }
 
             // Skip if debt already exists
-            $exists = Debt::where('student_id', $student->id)
+            $exists = Debt::where('freelancer_id', $freelancer->id)
                 ->where('discipline_id', $discipline->id)
                 ->where('status', 'DEBT')
                 ->exists();
@@ -130,9 +130,9 @@ class ImportController extends Controller
             }
 
             Debt::create([
-                'student_id'     => $student->id,
+                'freelancer_id'     => $freelancer->id,
                 'discipline_id'  => $discipline->id,
-                'assigned_by_id' => $teacher->id,
+                'assigned_by_id' => $jobgiver->id,
                 'status'         => 'DEBT',
             ]);
 
@@ -150,7 +150,7 @@ class ImportController extends Controller
     public function downloadTemplate(string $type)
     {
         $templates = [
-            'students' => [
+            'freelancers' => [
                 'filename' => 'шаблон_студенты.csv',
                 'header'   => 'Фамилия;Имя;Отчество;Email;Группа',
                 'example'  => 'Иванов;Иван;Иванович;[ivanov@uni.ru](mailto:ivanov@uni.ru);ИВТ-41',
@@ -158,7 +158,7 @@ class ImportController extends Controller
             'debts' => [
                 'filename' => 'шаблон_задолженности.csv',
                 'header'   => 'Email студента;Код дисциплины;Название дисциплины;Email преподавателя',
-                'example'  => 'ivanov@uni.ru;МАТ101;Высшая математика;teacher@uni.ru',
+                'example'  => 'ivanov@uni.ru;МАТ101;Высшая математика;jobgiver@uni.ru',
             ],
         ];
 
