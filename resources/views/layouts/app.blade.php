@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Система учёта задолженностей')</title>
+    <title>@yield('title', 'Маркетплейс для фриланса')</title>
     <link rel="stylesheet" href="{{ asset('build/assets/' . basename(glob(public_path('build/assets/app-*.css'))[0])) }}">
     <style>
         body { font-size: 14px; }
@@ -25,7 +25,7 @@
 {{-- Навигационная панель --}}
 <nav class="navbar navbar-dark bg-dark navbar-expand-lg px-3" style="height:56px;">
     <a class="navbar-brand" href="{{ route('dashboard') }}">
-        Учёт задолженностей
+        Учёт заказов
     </a>
     <div class="ms-auto d-flex align-items-center gap-3">
         {{-- Уведомления --}}
@@ -66,30 +66,30 @@
         <div class="col-md-2 p-0 sidebar">
             <nav class="nav flex-column">
                 @auth
-                    @if(auth()->user()->isAdmin() || auth()->user()->isDean())
-                        <span class="nav-section">Деканат</span>
-                        <a href="{{ route('dean.dashboard') }}"
-                           class="nav-link {{ request()->routeIs('dean.dashboard') ? 'active' : '' }}">
+                    @if(auth()->user()->isAdmin() || auth()->user()->isModerator())
+                        <span class="nav-section">Модерация</span>
+                        <a href="{{ route('moderator.dashboard') }}"
+                           class="nav-link {{ request()->routeIs('moderator.dashboard') ? 'active' : '' }}">
                             Главная
                         </a>
-                        <a href="{{ route('dean.debts') }}"
-                           class="nav-link {{ request()->routeIs('dean.debts') ? 'active' : '' }}">
+                        <a href="{{ route('moderator.debts') }}"
+                           class="nav-link {{ request()->routeIs('moderator.debts') ? 'active' : '' }}">
                             Задолженности
                         </a>
-                        <a href="{{ route('dean.retakes.index') }}"
-                           class="nav-link {{ request()->routeIs('dean.retakes.*') ? 'active' : '' }}">
+                        <a href="{{ route('moderator.retakes.index') }}"
+                           class="nav-link {{ request()->routeIs('moderator.retakes.*') ? 'active' : '' }}">
                             Пересдачи
                         </a>
-                        <a href="{{ route('dean.requests') }}"
-                           class="nav-link {{ request()->routeIs('dean.requests') ? 'active' : '' }}">
+                        <a href="{{ route('moderator.requests') }}"
+                           class="nav-link {{ request()->routeIs('moderator.requests') ? 'active' : '' }}">
                             Заявки
                         </a>
-                        <a href="{{ route('dean.reports') }}"
-                           class="nav-link {{ request()->routeIs('dean.reports') ? 'active' : '' }}">
+                        <a href="{{ route('moderator.reports') }}"
+                           class="nav-link {{ request()->routeIs('moderator.reports') ? 'active' : '' }}">
                             Отчёты
                         </a>
-                        <a href="{{ route('dean.import') }}"
-                           class="nav-link {{ request()->routeIs('dean.import*') ? 'active' : '' }}">
+                        <a href="{{ route('moderator.import') }}"
+                           class="nav-link {{ request()->routeIs('moderator.import*') ? 'active' : '' }}">
                             Импорт данных
                         </a>
                         @if(auth()->user()->isAdmin())
@@ -100,7 +100,7 @@
                             </a>
                             <a href="{{ route('admin.disciplines') }}"
                                class="nav-link {{ request()->routeIs('admin.disciplines') ? 'active' : '' }}">
-                                Дисциплины
+                                Заказы
                             </a>
                             <a href="{{ route('admin.role-requests') }}"
                                class="nav-link {{ request()->routeIs('admin.role-requests') ? 'active' : '' }}">
@@ -108,45 +108,45 @@
                             </a>
                         @endif
 
-                    @elseif(auth()->user()->isTeacher())
-                        <span class="nav-section">Преподаватель</span>
-                        <a href="{{ route('teacher.dashboard') }}"
-                           class="nav-link {{ request()->routeIs('teacher.dashboard') ? 'active' : '' }}">
+                    @elseif(auth()->user()->isJobgiver())
+                        <span class="nav-section">Заказчик</span>
+                        <a href="{{ route('jobgiver.dashboard') }}"
+                           class="nav-link {{ request()->routeIs('jobgiver.dashboard') ? 'active' : '' }}">
                             Главная
                         </a>
-                        <a href="{{ route('teacher.debts') }}"
-                           class="nav-link {{ request()->routeIs('teacher.debts*') ? 'active' : '' }}">
+                        <a href="{{ route('jobgiver.debts') }}"
+                           class="nav-link {{ request()->routeIs('jobgiver.debts*') ? 'active' : '' }}">
                             Задолженности
                         </a>
-                        <a href="{{ route('teacher.debts.create') }}"
-                           class="nav-link {{ request()->routeIs('teacher.debts.create') ? 'active' : '' }}">
+                        <a href="{{ route('jobgiver.debts.create') }}"
+                           class="nav-link {{ request()->routeIs('jobgiver.debts.create') ? 'active' : '' }}">
                             Выставить задолженность
                         </a>
-                        <a href="{{ route('teacher.retakes') }}"
-                           class="nav-link {{ request()->routeIs('teacher.retakes*') ? 'active' : '' }}">
+                        <a href="{{ route('jobgiver.retakes') }}"
+                           class="nav-link {{ request()->routeIs('jobgiver.retakes*') ? 'active' : '' }}">
                             Пересдачи
                         </a>
-                        <a href="{{ route('teacher.requests') }}"
-                           class="nav-link {{ request()->routeIs('teacher.requests') ? 'active' : '' }}">
+                        <a href="{{ route('jobgiver.requests') }}"
+                           class="nav-link {{ request()->routeIs('jobgiver.requests') ? 'active' : '' }}">
                             Мои заявки
                         </a>
 
                     @else
-                        <span class="nav-section">Студент</span>
-                        <a href="{{ route('student.dashboard') }}"
-                           class="nav-link {{ request()->routeIs('student.dashboard') ? 'active' : '' }}">
+                        <span class="nav-section">Фрилансер</span>
+                        <a href="{{ route('freelancer.dashboard') }}"
+                           class="nav-link {{ request()->routeIs('freelancer.dashboard') ? 'active' : '' }}">
                             Главная
                         </a>
-                        <a href="{{ route('student.debts') }}"
-                           class="nav-link {{ request()->routeIs('student.debts') ? 'active' : '' }}">
+                        <a href="{{ route('freelancer.debts') }}"
+                           class="nav-link {{ request()->routeIs('freelancer.debts') ? 'active' : '' }}">
                             Мои задолженности
                         </a>
-                        <a href="{{ route('student.retakes') }}"
-                           class="nav-link {{ request()->routeIs('student.retakes') ? 'active' : '' }}">
+                        <a href="{{ route('freelancer.retakes') }}"
+                           class="nav-link {{ request()->routeIs('freelancer.retakes') ? 'active' : '' }}">
                             Мои пересдачи
                         </a>
-                        <a href="{{ route('student.request-role') }}"
-                           class="nav-link {{ request()->routeIs('student.request-role') ? 'active' : '' }}">
+                        <a href="{{ route('freelancer.request-role') }}"
+                           class="nav-link {{ request()->routeIs('freelancer.request-role') ? 'active' : '' }}">
                             Заявка на преподавателя
                         </a>
                     @endif
