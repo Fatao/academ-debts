@@ -14,31 +14,31 @@ class User extends Authenticatable
         'email', 'password',
         'last_name', 'first_name', 'middle_name',
         'group_id',
-        'is_teacher', 'is_dean', 'is_admin',
+        'is_jobgiver', 'is_moderator', 'is_admin',
     ];
 
     protected $hidden = ['password', 'remember_token'];
 
     protected $casts = [
-        'is_teacher' => 'boolean',
-        'is_dean'    => 'boolean',
+        'is_jobgiver' => 'boolean',
+        'is_moderator'    => 'boolean',
         'is_admin'   => 'boolean',
     ];
 
-    public function isStudent(): bool
+    public function isFreelancer(): bool
     {
-        return !$this->is_teacher && !$this->is_dean && !$this->is_admin;
+        return !$this->is_jobgiver && !$this->is_moderator && !$this->is_admin;
     }
 
-    public function isTeacher(): bool { return (bool) $this->is_teacher; }
-    public function isDean(): bool    { return (bool) $this->is_dean; }
+    public function isJobgiver(): bool { return (bool) $this->is_jobgiver; }
+    public function isModerator(): bool    { return (bool) $this->is_moderator; }
     public function isAdmin(): bool   { return (bool) $this->is_admin; }
 
     public function roleLabel(): string
     {
         if ($this->is_admin)   return 'Администратор';
-        if ($this->is_dean)    return 'Деканат';
-        if ($this->is_teacher) return 'Преподаватель';
+        if ($this->is_moderator)    return 'Деканат';
+        if ($this->is_jobgiver) return 'Преподаватель';
         return 'Студент';
     }
 
@@ -62,7 +62,7 @@ class User extends Authenticatable
 
     public function debts()
     {
-        return $this->hasMany(Debt::class, 'student_id');
+        return $this->hasMany(Debt::class, 'freelancer_id');
     }
 
     public function assignedDebts()
@@ -72,17 +72,17 @@ class User extends Authenticatable
 
     public function disciplines()
     {
-        return $this->belongsToMany(Discipline::class, 'discipline_teachers', 'teacher_id', 'discipline_id');
+        return $this->belongsToMany(Discipline::class, 'discipline_jobgivers', 'jobgiver_id', 'discipline_id');
     }
 
-    public function retakesAsTeacher()
+    public function retakesAsJobgiver()
     {
-        return $this->belongsToMany(Retake::class, 'retake_teachers', 'teacher_id', 'retake_id');
+        return $this->belongsToMany(Retake::class, 'retake_jobgivers', 'jobgiver_id', 'retake_id');
     }
 
-    public function retakesAsStudent()
+    public function retakesAsFreelancer()
     {
-        return $this->belongsToMany(Retake::class, 'retake_students', 'student_id', 'retake_id')
+        return $this->belongsToMany(Retake::class, 'retake_freelancers', 'freelancer_id', 'retake_id')
                     ->withPivot('result_status', 'grade_value', 'grade_scale', 'updated_at');
     }
 
@@ -96,8 +96,8 @@ class User extends Authenticatable
         return $this->hasMany(Notification::class)->where('is_read', false);
     }
 
-    public function teacherRoleRequests()
+    public function jobgiverRoleRequests()
     {
-        return $this->hasMany(TeacherRoleRequest::class);
+        return $this->hasMany(JobgiverRoleRequest::class);
     }
 }
