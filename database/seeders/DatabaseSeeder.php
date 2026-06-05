@@ -212,6 +212,9 @@ class DatabaseSeeder extends Seeder
                 ['Преподаватель', 'petrova@edu.ugrasu.ru', 'password'],
                 ['Студент',       'smirnov@edu.ugrasu.ru', 'password'],
                 ['Студент',       'kozlova@edu.ugrasu.ru', 'password'],
+                ['Студент',       'sidorov@edu.ugrasu.ru', 'password'],
+                ['Студент',       'fatao@edu.ugrasu.ru',   'password'],
+                ['Студент',       'novikov@edu.ugrasu.ru', 'password'],
             ]
         );
     }
