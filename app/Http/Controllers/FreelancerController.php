@@ -4,19 +4,19 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Auth;
 
-class StudentController extends Controller
+class FreelancerController extends Controller
 {
     public function dashboard()
     {
         $user   = Auth::user();
         $debts  = $user->debts()->with('discipline', 'assignedBy')->latest()->get();
-        $retakes = $user->retakesAsStudent()->with('discipline')->orderByDesc('start_datetime')->get();
+        $retakes = $user->retakesAsFreelancer()->with('discipline')->orderByDesc('start_datetime')->get();
 
         $totalDebts  = $debts->where('status', 'DEBT')->count();
         $closedDebts = $debts->where('status', 'CLOSED')->count();
         $upcomingRetakes = $retakes->where('status', 'SCHEDULED')->count();
 
-        return view('student.dashboard', compact(
+        return view('freelancer.dashboard', compact(
             'user', 'debts', 'retakes',
             'totalDebts', 'closedDebts', 'upcomingRetakes'
         ));
@@ -25,13 +25,13 @@ class StudentController extends Controller
     public function debts()
     {
         $debts = Auth::user()->debts()->with('discipline', 'assignedBy')->latest()->get();
-        return view('student.debts', compact('debts'));
+        return view('freelancer.debts', compact('debts'));
     }
 
     public function retakes()
     {
-        $retakes = Auth::user()->retakesAsStudent()
-            ->with('discipline', 'teachers')
+        $retakes = Auth::user()->retakesAsFreelancer()
+            ->with('discipline', 'jobgivers')
             ->orderByDesc('start_datetime')
             ->get();
 
@@ -39,21 +39,21 @@ class StudentController extends Controller
             $retake->syncStatus();
         }
 
-        return view('student.retakes', compact('retakes'));
+        return view('freelancer.retakes', compact('retakes'));
     }
 
-    public function requestTeacherRole()
+    public function requestJobgiverRole()
 {
-    $existing = \App\Models\TeacherRoleRequest::where('user_id', Auth::id())
+    $existing = \App\Models\JobgiverRoleRequest::where('user_id', Auth::id())
         ->whereIn('status', ['PENDING', 'APPROVED'])
         ->first();
 
-    return view('student.request-role', compact('existing'));
+    return view('freelancer.request-role', compact('existing'));
 }
 
-public function submitTeacherRoleRequest(\Illuminate\Http\Request $request)
+public function submitJobgiverRoleRequest(\Illuminate\Http\Request $request)
 {
-    $existing = \App\Models\TeacherRoleRequest::where('user_id', Auth::id())
+    $existing = \App\Models\JobgiverRoleRequest::where('user_id', Auth::id())
         ->whereIn('status', ['PENDING', 'APPROVED'])
         ->first();
 
@@ -65,7 +65,7 @@ public function submitTeacherRoleRequest(\Illuminate\Http\Request $request)
         'comment' => ['nullable', 'string', 'max:500'],
     ]);
 
-    \App\Models\TeacherRoleRequest::create([
+    \App\Models\JobgiverRoleRequest::create([
         'user_id' => Auth::id(),
         'status'  => 'PENDING',
         'comment' => $request->comment,
