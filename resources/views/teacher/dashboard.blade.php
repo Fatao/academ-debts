@@ -1,14 +1,14 @@
 @extends('layouts.app')
 
-@section('title', 'Кабинет преподавателя')
-@section('page-title', 'Кабинет преподавателя')
+@section('title', 'Кабинет заказчика')
+@section('page-title', 'Кабинет заказчика')
 
 @section('content')
 <div class="row mb-4">
     <div class="col-md-3">
         <div class="card border">
             <div class="card-body">
-                <div class="text-muted" style="font-size:12px;">ОТКРЫТЫХ ДОЛГОВ</div>
+                <div class="text-muted" style="font-size:12px;">ОТКРЫТЫХ ЗАКАЗОВ</div>
                 <div class="fs-3 fw-bold text-danger">{{ $openDebts }}</div>
             </div>
         </div>
@@ -16,7 +16,7 @@
     <div class="col-md-3">
         <div class="card border">
             <div class="card-body">
-                <div class="text-muted" style="font-size:12px;">ЗАКРЫТЫХ ДОЛГОВ</div>
+                <div class="text-muted" style="font-size:12px;">ЗАКРЫТЫХ ЗАКАЗОВ</div>
                 <div class="fs-3 fw-bold text-success">{{ $closedDebts }}</div>
             </div>
         </div>
@@ -24,7 +24,7 @@
     <div class="col-md-3">
         <div class="card border">
             <div class="card-body">
-                <div class="text-muted" style="font-size:12px;">ПРЕДСТОЯЩИХ ПЕРЕСДАЧ</div>
+                <div class="text-muted" style="font-size:12px;">ПРЕДСТОЯЩИХ СДАЧ</div>
                 <div class="fs-3 fw-bold text-primary">{{ $retakes }}</div>
             </div>
         </div>
@@ -32,22 +32,22 @@
     <div class="col-md-3">
         <div class="card border">
             <div class="card-body">
-                <div class="text-muted" style="font-size:12px;">МОИ ДИСЦИПЛИНЫ</div>
+                <div class="text-muted" style="font-size:12px;">МОИ ЗАКАЗЫ</div>
                 <div class="fs-3 fw-bold">{{ auth()->user()->disciplines->count() }}</div>
             </div>
         </div>
     </div>
 </div>
 
-<h6 class="border-bottom pb-2 mb-3">Последние задолженности по моим дисциплинам</h6>
+<h6 class="border-bottom pb-2 mb-3">Последние задолженности по моим заказам</h6>
 @if($recentDebts->isEmpty())
     <p class="text-muted">Задолженностей нет.</p>
 @else
     <table class="table table-bordered table-hover table-sm">
         <thead>
             <tr>
-                <th>Студент</th>
-                <th>Дисциплина</th>
+                <th>Фрилансер</th>
+                <th>Заказ</th>
                 <th>Статус</th>
                 <th>Дата</th>
             </tr>
@@ -55,7 +55,7 @@
         <tbody>
             @foreach($recentDebts as $debt)
             <tr>
-                <td>{{ $debt->student->fullName() }}</td>
+                <td>{{ $debt->freelancer->fullName() }}</td>
                 <td>{{ $debt->discipline->name }}</td>
                 <td>
                     @if($debt->isOpen())
@@ -69,6 +69,6 @@
             @endforeach
         </tbody>
     </table>
-    <a href="{{ route('teacher.debts') }}" class="btn btn-sm btn-outline-primary">Все задолженности</a>
+    <a href="{{ route('jobgiver.debts') }}" class="btn btn-sm btn-outline-primary">Все заказы</a>
 @endif
 @endsection
