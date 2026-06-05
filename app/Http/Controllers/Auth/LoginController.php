@@ -16,11 +16,12 @@ class LoginController extends Controller
     public function login(Request $request)
     {
         $credentials = $request->validate([
-            'email'    => ['required', 'email'],
+            'email'    => ['required', 'email', 'regex:/@edu\.ugrasu\.ru$/'],
             'password' => ['required'],
         ], [
             'email.required'    => 'Введите адрес электронной почты.',
             'email.email'       => 'Некорректный формат email.',
+            'email.regex'       => 'Вход доступен только для адресов @edu.ugrasu.ru.',
             'password.required' => 'Введите пароль.',
         ]);
 

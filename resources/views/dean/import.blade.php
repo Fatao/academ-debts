@@ -39,8 +39,8 @@
                     <strong>Формат файла (разделитель — точка с запятой):</strong><br>
                     <code>Фамилия;Имя;Отчество;Email;Группа</code><br><br>
                     <strong>Пример:</strong><br>
-                    <code>Иванов;Иван;Иванович;ivanov@uni.ru;ИВТ-41</code><br>
-                    <code>Петрова;Мария;Сергеевна;petrova@uni.ru;ПИ-41</code>
+                    <code>Иванов;Иван;Иванович;ivanov@edu.ugrasu.ru;ИВТ41Б</code><br>
+                    <code>Петрова;Мария;Сергеевна;petrova@edu.ugrasu.ru;ПИ41Б</code>
                 </div>
 
                 <form method="POST" action="{{ route('dean.import.students') }}"
@@ -72,8 +72,8 @@
                     <strong>Формат файла (разделитель — точка с запятой):</strong><br>
                     <code>Email студента;Код дисциплины;Название дисциплины;Email преподавателя</code><br><br>
                     <strong>Пример:</strong><br>
-                    <code>ivanov@uni.ru;МАТ101;Высшая математика;smirnov@uni.ru</code><br>
-                    <code>petrova@uni.ru;ПРО201;Программирование;kozlov@uni.ru</code>
+                    <code>ivanov@edu.ugrasu.ru;МАТ101;Высшая математика;smirnov@edu.ugrasu.ru</code><br>
+                    <code>petrova@edu.ugrasu.ru;ПРО201;Программирование;kozlov@edu.ugrasu.ru</code>
                 </div>
 
                 <form method="POST" action="{{ route('dean.import.debts') }}"
