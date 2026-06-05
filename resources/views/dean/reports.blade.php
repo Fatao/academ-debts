@@ -8,7 +8,7 @@
     <div class="col-md-5">
         <div class="card border">
             <div class="card-header bg-white">
-                <strong>Выгрузка пересдач за период</strong>
+                <strong>Выгрузка заказов за период</strong>
             </div>
             <div class="card-body">
                 <form method="GET" action="{{ route('dean.reports.export') }}">
@@ -39,23 +39,23 @@
                             <td class="fw-bold">{{ \App\Models\Debt::count() }}</td>
                         </tr>
                         <tr>
-                            <td>Активных задолженностей</td>
+                            <td>Активных заказов</td>
                             <td class="fw-bold text-danger">{{ \App\Models\Debt::where('status','DEBT')->count() }}</td>
                         </tr>
                         <tr>
-                            <td>Закрытых задолженностей</td>
+                            <td>Закрытых заказов</td>
                             <td class="fw-bold text-success">{{ \App\Models\Debt::where('status','CLOSED')->count() }}</td>
                         </tr>
                         <tr>
-                            <td>Всего пересдач</td>
+                            <td>Всего заказов</td>
                             <td class="fw-bold">{{ \App\Models\Retake::count() }}</td>
                         </tr>
                         <tr>
-                            <td>Завершённых пересдач</td>
+                            <td>Завершённых заказов</td>
                             <td class="fw-bold">{{ \App\Models\Retake::where('status','COMPLETED')->count() }}</td>
                         </tr>
                         <tr>
-                            <td>Студентов сдали пересдачу</td>
+                            <td>Фрилансеров сдали заказы</td>
                             <td class="fw-bold text-success">
                                 {{ \Illuminate\Support\Facades\DB::table('retake_students')->where('result_status','PASSED')->count() }}
                             </td>
