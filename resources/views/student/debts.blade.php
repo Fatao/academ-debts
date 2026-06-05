@@ -1,18 +1,18 @@
 @extends('layouts.app')
 
-@section('title', 'Мои задолженности')
-@section('page-title', 'Мои задолженности')
+@section('title', 'Мои заказы')
+@section('page-title', 'Мои заказы')
 
 @section('content')
 @if($debts->isEmpty())
-    <div class="alert alert-info">У вас нет задолженностей.</div>
+    <div class="alert alert-info">У вас нет заказов.</div>
 @else
     <table class="table table-bordered table-striped table-hover">
         <thead>
             <tr>
                 <th>#</th>
-                <th>Дисциплина</th>
-                <th>Преподаватель</th>
+                <th>Заказ</th>
+                <th>Заказчик</th>
                 <th>Статус</th>
                 <th>Оценка</th>
                 <th>Тип оценивания</th>
