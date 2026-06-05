@@ -4,7 +4,7 @@
 @section('page-title', 'Пересдачи')
 
 @section('page-actions')
-    <a href="{{ route('dean.retakes.create') }}" class="btn btn-primary btn-sm">Назначить пересдачу</a>
+    <a href="{{ route('moderator.retakes.create') }}" class="btn btn-primary btn-sm">Назначить пересдачу</a>
 @endsection
 
 @section('content')
@@ -33,11 +33,11 @@
                 <td>{{ $retake->location() }}</td>
                 <td>{{ $retake->typeLabel() }}</td>
                 <td>
-                    @foreach($retake->teachers as $t)
+                    @foreach($retake->jobgivers as $t)
                         <div>{{ $t->shortName() }}</div>
                     @endforeach
                 </td>
-                <td>{{ $retake->students->count() }}</td>
+                <td>{{ $retake->freelancers->count() }}</td>
                 <td>
                     @if($retake->status === 'SCHEDULED')
                         <span class="badge bg-primary">Назначена</span>
