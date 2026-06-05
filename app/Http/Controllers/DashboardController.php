@@ -11,14 +11,14 @@ class DashboardController extends Controller
     {
         $user = Auth::user();
 
-        if ($user->isAdmin() || $user->isDean()) {
-            return redirect()->route('dean.dashboard');
+        if ($user->isAdmin() || $user->isModerator()) {
+            return redirect()->route('moderator.dashboard');
         }
 
-        if ($user->isTeacher()) {
-            return redirect()->route('teacher.dashboard');
+        if ($user->isJobgiver()) {
+            return redirect()->route('jobgiver.dashboard');
         }
 
-        return redirect()->route('student.dashboard');
+        return redirect()->route('freelancer.dashboard');
     }
 }
