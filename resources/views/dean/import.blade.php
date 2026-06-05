@@ -26,12 +26,12 @@
     <div class="col-md-6">
         <div class="card border h-100">
             <div class="card-header bg-white">
-                <strong>Импорт студентов</strong>
+                <strong>Импорт фрилансеров</strong>
             </div>
             <div class="card-body">
                 <p class="text-muted" style="font-size:13px;">
-                    Загрузите CSV-файл со списком студентов. Новые студенты будут
-                    добавлены в систему с паролем по умолчанию <code>student123</code>.
+                    Загрузите CSV-файл со списком фрилансеров. Новые фрилансеры будут
+                    добавлены в систему с паролем по умолчанию <code>freelancer123</code>.
                     Существующие аккаунты не изменяются.
                 </p>
 
@@ -43,7 +43,7 @@
                     <code>Петрова;Мария;Сергеевна;petrova@edu.ugrasu.ru;ПИ41Б</code>
                 </div>
 
-                <form method="POST" action="{{ route('dean.import.students') }}"
+                <form method="POST" action="{{ route('moderator.import.freelancers') }}"
                       enctype="multipart/form-data">
                     @csrf
                     <div class="mb-3">
@@ -56,27 +56,27 @@
         </div>
     </div>
 
-    {{-- Импорт задолженностей --}}
+    {{-- Импорт заказов --}}
     <div class="col-md-6">
         <div class="card border h-100">
             <div class="card-header bg-white">
-                <strong>Импорт задолженностей</strong>
+                <strong>Импорт заказов</strong>
             </div>
             <div class="card-body">
                 <p class="text-muted" style="font-size:13px;">
-                    Загрузите CSV-файл со списком задолженностей. Студенты и преподаватели
+                    Загрузите CSV-файл со списком заказов Фрилансеры и заказчики
                     должны уже существовать в системе.
                 </p>
 
                 <div class="mb-3 p-2 border rounded bg-light" style="font-size:12px;">
                     <strong>Формат файла (разделитель — точка с запятой):</strong><br>
-                    <code>Email студента;Код дисциплины;Название дисциплины;Email преподавателя</code><br><br>
+                    <code>Email фрилансера;Код заказа;Название заказа;Email заказчика</code><br><br>
                     <strong>Пример:</strong><br>
                     <code>ivanov@edu.ugrasu.ru;МАТ101;Высшая математика;smirnov@edu.ugrasu.ru</code><br>
                     <code>petrova@edu.ugrasu.ru;ПРО201;Программирование;kozlov@edu.ugrasu.ru</code>
                 </div>
 
-                <form method="POST" action="{{ route('dean.import.debts') }}"
+                <form method="POST" action="{{ route('moderator.import.debts') }}"
                       enctype="multipart/form-data">
                     @csrf
                     <div class="mb-3">
@@ -95,10 +95,10 @@
 <div class="mt-4">
     <h6 class="border-bottom pb-2 mb-3">Шаблоны файлов для заполнения</h6>
     <div class="d-flex gap-3">
-        <a href="{{ route('dean.import.template', 'students') }}" class="btn btn-outline-secondary btn-sm">
+        <a href="{{ route('moderator.import.template', 'freelancers') }}" class="btn btn-outline-secondary btn-sm">
             Скачать шаблон студентов
         </a>
-        <a href="{{ route('dean.import.template', 'debts') }}" class="btn btn-outline-secondary btn-sm">
+        <a href="{{ route('moderator.import.template', 'debts') }}" class="btn btn-outline-secondary btn-sm">
             Скачать шаблон задолженностей
         </a>
     </div>
