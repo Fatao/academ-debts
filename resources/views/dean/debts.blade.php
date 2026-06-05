@@ -1,17 +1,17 @@
 @extends('layouts.app')
 
-@section('title', 'Сводная таблица задолженностей')
-@section('page-title', 'Сводная таблица задолженностей')
+@section('title', 'Сводная таблица заказов')
+@section('page-title', 'Сводная таблица заказов')
 
 @section('content')
 <table class="table table-bordered table-striped table-hover">
     <thead>
         <tr>
             <th>#</th>
-            <th>Студент</th>
+            <th>Фрилансер</th>
             <th>Группа</th>
-            <th>Дисциплина</th>
-            <th>Преподаватель</th>
+            <th>Заказ</th>
+            <th>Заказчик</th>
             <th>Статус</th>
             <th>Оценка</th>
             <th>Тип оценивания</th>
@@ -22,13 +22,13 @@
         @foreach($debts as $i => $debt)
         <tr>
             <td>{{ $i + 1 }}</td>
-            <td>{{ $debt->student->fullName() }}</td>
-            <td>{{ $debt->student->group->name ?? '—' }}</td>
+            <td>{{ $debt->freelancer->fullName() }}</td>
+            <td>{{ $debt->freelancer->group->name ?? '—' }}</td>
             <td>{{ $debt->discipline->name }}</td>
             <td>{{ $debt->assignedBy->shortName() }}</td>
             <td>
                 @if($debt->isOpen())
-                    <span class="badge bg-danger">Задолженность</span>
+                    <span class="badge bg-danger">Заказ</span>
                 @else
                     <span class="badge bg-success">Закрыта</span>
                 @endif
