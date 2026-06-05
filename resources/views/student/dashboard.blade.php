@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Личный кабинет студента')
+@section('title', 'Личный кабинет фрилансера')
 @section('page-title', 'Личный кабинет')
 
 @section('content')
@@ -8,7 +8,7 @@
     <div class="col-md-4">
         <div class="card border">
             <div class="card-body">
-                <div class="text-muted" style="font-size:12px;">АКТИВНЫЕ ЗАДОЛЖЕННОСТИ</div>
+                <div class="text-muted" style="font-size:12px;">АКТИВНЫЕ ЗАКАЗЫ</div>
                 <div class="fs-3 fw-bold text-danger">{{ $totalDebts }}</div>
             </div>
         </div>
@@ -16,7 +16,7 @@
     <div class="col-md-4">
         <div class="card border">
             <div class="card-body">
-                <div class="text-muted" style="font-size:12px;">ЗАКРЫТЫХ ЗАДОЛЖЕННОСТЕЙ</div>
+                <div class="text-muted" style="font-size:12px;">ЗАКРЫТЫХ ЗАКАЗОВ</div>
                 <div class="fs-3 fw-bold text-success">{{ $closedDebts }}</div>
             </div>
         </div>
@@ -24,7 +24,7 @@
     <div class="col-md-4">
         <div class="card border">
             <div class="card-body">
-                <div class="text-muted" style="font-size:12px;">ПРЕДСТОЯЩИХ ПЕРЕСДАЧ</div>
+                <div class="text-muted" style="font-size:12px;">ПРЕДСТОЯЩИХ ЗАКАЗОВ</div>
                 <div class="fs-3 fw-bold text-primary">{{ $upcomingRetakes }}</div>
             </div>
         </div>
@@ -33,15 +33,15 @@
 
 <div class="row">
     <div class="col-md-7">
-        <h6 class="border-bottom pb-2 mb-3">Мои задолженности</h6>
+        <h6 class="border-bottom pb-2 mb-3">Мои заказы</h6>
         @if($debts->isEmpty())
-            <p class="text-muted">Задолженностей нет.</p>
+            <p class="text-muted">Заказов нет.</p>
         @else
             <table class="table table-bordered table-hover table-sm">
                 <thead>
                     <tr>
-                        <th>Дисциплина</th>
-                        <th>Преподаватель</th>
+                        <th>Категория</th>
+                        <th>Заказчик</th>
                         <th>Статус</th>
                         <th>Оценка</th>
                     </tr>
@@ -53,9 +53,9 @@
                         <td>{{ $debt->assignedBy->shortName() }}</td>
                         <td>
                             @if($debt->isOpen())
-                                <span class="badge bg-danger">Задолженность</span>
+                                <span class="badge bg-danger">Заказ</span>
                             @else
-                                <span class="badge bg-success">Закрыта</span>
+                                <span class="badge bg-success">Закрыт</span>
                             @endif
                         </td>
                         <td>
@@ -73,7 +73,7 @@
     </div>
 
     <div class="col-md-5">
-        <h6 class="border-bottom pb-2 mb-3">Предстоящие пересдачи</h6>
+        <h6 class="border-bottom pb-2 mb-3">Предстоящие заказы</h6>
         @if($retakes->isEmpty())
             <p class="text-muted">Пересдач не назначено.</p>
         @else
