@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
-@section('title', 'Выставить задолженность')
-@section('page-title', 'Выставить задолженность')
+@section('title', 'Выставить заказ')
+@section('page-title', 'Выставить заказ')
 
 @section('content')
 <div class="row">
@@ -12,13 +12,13 @@
             </div>
         @endif
 
-        <form method="POST" action="{{ route('teacher.debts.store') }}">
+        <form method="POST" action="{{ route('jobgiver.debts.store') }}">
             @csrf
 
             <div class="mb-3">
-                <label class="form-label">Дисциплина <span class="text-danger">*</span></label>
+                <label class="form-label">Заказ <span class="text-danger">*</span></label>
                 <select name="discipline_id" class="form-select" required>
-                    <option value="">— Выберите дисциплину —</option>
+                    <option value="">— Выберите заказ —</option>
                     @foreach($disciplines as $d)
                         <option value="{{ $d->id }}" {{ old('discipline_id') == $d->id ? 'selected' : '' }}>
                             {{ $d->name }}
@@ -28,11 +28,11 @@
             </div>
 
             <div class="mb-3">
-                <label class="form-label">Студент <span class="text-danger">*</span></label>
-                <select name="student_id" class="form-select" required>
-                    <option value="">— Выберите студента —</option>
-                    @foreach($students as $s)
-                        <option value="{{ $s->id }}" {{ old('student_id') == $s->id ? 'selected' : '' }}>
+                <label class="form-label">Фрилансер <span class="text-danger">*</span></label>
+                <select name="freelancer_id" class="form-select" required>
+                    <option value="">— Выберите фрилансера —</option>
+                    @foreach($freelancers as $s)
+                        <option value="{{ $s->id }}" {{ old('freelancer_id') == $s->id ? 'selected' : '' }}>
                             {{ $s->fullName() }} {{ $s->group ? '(' . $s->group->name . ')' : '' }}
                         </option>
                     @endforeach
@@ -45,8 +45,8 @@
             </div>
 
             <div class="d-flex gap-2">
-                <button type="submit" class="btn btn-primary">Выставить задолженность</button>
-                <a href="{{ route('teacher.debts') }}" class="btn btn-secondary">Отмена</a>
+                <button type="submit" class="btn btn-primary">Выставить заказ</button>
+                <a href="{{ route('jobgiver.debts') }}" class="btn btn-secondary">Отмена</a>
             </div>
         </form>
     </div>
