@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
-@section('title', 'Назначить пересдачу')
-@section('page-title', 'Назначить пересдачу')
+@section('title', 'Назначить заказ')
+@section('page-title', 'Назначить заказ')
 
 @section('content')
 <div class="row">
@@ -15,15 +15,15 @@
             </div>
         @endif
 
-        <form method="POST" action="{{ route('dean.retakes.store') }}">
+        <form method="POST" action="{{ route('moderator.retakes.store') }}">
             @csrf
 
-            {{-- Дисциплина + Тип --}}
+            {{-- Заказ + Тип --}}
             <div class="row mb-3">
                 <div class="col-md-8">
-                    <label class="form-label">Дисциплина <span class="text-danger">*</span></label>
+                    <label class="form-label">Заказ <span class="text-danger">*</span></label>
                     <select name="discipline_id" class="form-select" required>
-                        <option value="">— Выберите дисциплину —</option>
+                        <option value="">— Выберите заказ —</option>
                         @foreach($disciplines as $d)
                             <option value="{{ $d->id }}" {{ old('discipline_id') == $d->id ? 'selected' : '' }}>
                                 {{ $d->name }}
@@ -32,7 +32,7 @@
                     </select>
                 </div>
                 <div class="col-md-4">
-                    <label class="form-label">Тип пересдачи <span class="text-danger">*</span></label>
+                    <label class="form-label">Тип заказа <span class="text-danger">*</span></label>
                     <select name="type" class="form-select" required id="retake-type">
                         <option value="REGULAR"    {{ old('type','REGULAR') === 'REGULAR'    ? 'selected' : '' }}>Обычная</option>
                         <option value="COMMISSION" {{ old('type') === 'COMMISSION' ? 'selected' : '' }}>С комиссией (мин. 3 преп.)</option>
@@ -64,18 +64,18 @@
                 </div>
             </div>
 
-            {{-- Преподаватели --}}
+            {{-- заказчики --}}
             <div class="mb-3">
                 <label class="form-label">
-                    Преподаватели <span class="text-danger">*</span>
+                    Заказчики <span class="text-danger">*</span>
                     <span id="commission-hint" class="text-danger ms-2" style="font-size:12px;display:none;">
                         При комиссии необходимо выбрать минимум 3 преподавателей
                     </span>
                 </label>
-                <select name="teacher_ids[]" class="form-select" multiple size="6" required id="teacher-select">
-                    @foreach($teachers as $t)
+                <select name="jobgiver_ids[]" class="form-select" multiple size="6" required id="jobgiver-select">
+                    @foreach($jobgivers as $t)
                         <option value="{{ $t->id }}"
-                            {{ in_array($t->id, old('teacher_ids', [])) ? 'selected' : '' }}>
+                            {{ in_array($t->id, old('jobgiver_ids', [])) ? 'selected' : '' }}>
                             {{ $t->fullName() }}
                         </option>
                     @endforeach
@@ -85,7 +85,7 @@
 
             <hr class="my-3">
 
-            {{-- Студенты: курс → группа → список --}}
+            {{-- Фрилансеры: курс → группа → список --}}
             <label class="form-label">Студенты <span class="text-danger">*</span></label>
 
             <div class="row mb-2">
@@ -109,21 +109,21 @@
                 </div>
             </div>
 
-            <select name="student_ids[]" class="form-select" multiple size="10" required id="student-select">
-                @foreach($students as $s)
+            <select name="freelancer_ids[]" class="form-select" multiple size="10" required id="freelancer-select">
+                @foreach($freelancers as $s)
                     <option value="{{ $s->id }}"
                             data-year="{{ $s->group->year ?? '' }}"
                             data-group="{{ $s->group_id ?? '' }}"
-                        {{ in_array($s->id, old('student_ids', [])) ? 'selected' : '' }}>
+                        {{ in_array($s->id, old('freelancer_ids', [])) ? 'selected' : '' }}>
                         {{ $s->fullName() }} {{ $s->group ? '(' . $s->group->name . ')' : '' }}
                     </option>
                 @endforeach
             </select>
-            <div class="form-text">Удерживайте <kbd>Ctrl</kbd> для выбора нескольких студентов.</div>
+            <div class="form-text">Удерживайте <kbd>Ctrl</kbd> для выбора нескольких фрилансеров</div>
 
             <div class="mt-4 d-flex gap-2">
                 <button type="submit" class="btn btn-primary">Назначить пересдачу</button>
-                <a href="{{ route('dean.retakes.index') }}" class="btn btn-secondary">Отмена</a>
+                <a href="{{ route('moderator.retakes.index') }}" class="btn btn-secondary">Отмена</a>
             </div>
         </form>
     </div>
@@ -137,7 +137,7 @@ const groupsByYear = @json($groupsByYear);
 
 const yearFilter    = document.getElementById('year-filter');
 const groupFilter   = document.getElementById('group-filter');
-const studentSelect = document.getElementById('student-select');
+const freelancerSelect = document.getElementById('freelancer-select');
 const selectAllBtn  = document.getElementById('select-all-btn');
 const retakeType    = document.getElementById('retake-type');
 const commHint      = document.getElementById('commission-hint');
@@ -155,7 +155,7 @@ yearFilter.addEventListener('change', function() {
     selectAllBtn.disabled = true;
 
     // Показать/скрыть студентов по курсу
-    Array.from(studentSelect.options).forEach(opt => {
+    Array.from(freelancerSelect.options).forEach(opt => {
         opt.style.display = (!year || opt.dataset.year === year) ? '' : 'none';
     });
 
@@ -175,7 +175,7 @@ groupFilter.addEventListener('change', function() {
     const groupId = this.value;
     selectAllBtn.disabled = !groupId;
 
-    Array.from(studentSelect.options).forEach(opt => {
+    Array.from(freelancerSelect.options).forEach(opt => {
         if (!groupId) {
             opt.style.display = opt.dataset.year === yearFilter.value ? '' : 'none';
         } else {
@@ -187,7 +187,7 @@ groupFilter.addEventListener('change', function() {
 // Выбрать всех в группе
 selectAllBtn.addEventListener('click', function() {
     const groupId = groupFilter.value;
-    Array.from(studentSelect.options).forEach(opt => {
+    Array.from(freelancerSelect.options).forEach(opt => {
         if (opt.dataset.group === groupId && opt.style.display !== 'none') {
             opt.selected = true;
         }
