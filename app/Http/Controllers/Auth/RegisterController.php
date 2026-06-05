@@ -23,7 +23,7 @@ class RegisterController extends Controller
             'first_name'            => ['required', 'string', 'max:100'],
             'middle_name'           => ['nullable', 'string', 'max:100'],
             'email'                 => ['required', 'email', 'unique:users,email', 'regex:/@edu\.ugrasu\.ru$/'],
-            'role'                  => ['required', 'in:student,teacher'],
+            'role'                  => ['required', 'in:freelancer,jobgiver'],
             'group_id'              => ['nullable', 'exists:groups,id'],
             'password'              => ['required', 'min:6', 'confirmed'],
         ], [
@@ -44,8 +44,8 @@ class RegisterController extends Controller
             'first_name'  => $request->first_name,
             'middle_name' => $request->middle_name,
             'email'       => $request->email,
-            'group_id'    => $request->role === 'student' ? $request->group_id : null,
-            'is_teacher'  => $request->role === 'teacher',
+            'group_id'    => $request->role === 'freelancer' ? $request->group_id : null,
+            'is_jobgiver'  => $request->role === 'jobgiver',
             'password'    => Hash::make($request->password),
         ]);
 
