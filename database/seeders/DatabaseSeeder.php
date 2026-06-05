@@ -41,49 +41,49 @@ class DatabaseSeeder extends Seeder
             'first_name'  => 'Системный',
             'middle_name' => null,
             'is_admin'    => true,
-            'is_dean'     => true,
+            'is_moderator'     => true,
         ]);
 
-        // Деканат
-        $dean = User::create([
-            'email'       => 'dean@edu.ugrasu.ru',
+        // Модерация
+        $moderator = User::create([
+            'email'       => 'moderator@edu.ugrasu.ru',
             'password'    => Hash::make('password'),
             'last_name'   => 'Деканов',
             'first_name'  => 'Пётр',
             'middle_name' => 'Иванович',
-            'is_dean'     => true,
+            'is_moderator'     => true,
         ]);
 
-        // Преподаватели
-        $teacher1 = User::create([
+        // Заказчики
+        $jobgiver1 = User::create([
             'email'       => 'ivanov@edu.ugrasu.ru',
             'password'    => Hash::make('password'),
             'last_name'   => 'Иванов',
             'first_name'  => 'Иван',
             'middle_name' => 'Иванович',
-            'is_teacher'  => true,
+            'is_jobgiver'  => true,
         ]);
 
-        $teacher2 = User::create([
+        $jobgiver2 = User::create([
             'email'       => 'petrova@edu.ugrasu.ru',
             'password'    => Hash::make('password'),
             'last_name'   => 'Петрова',
             'first_name'  => 'Мария',
             'middle_name' => 'Сергеевна',
-            'is_teacher'  => true,
+            'is_jobgiver'  => true,
         ]);
 
-        $teacher3 = User::create([
+        $jobgiver3 = User::create([
             'email'       => 'sidorov@edu.ugrasu.ru',
             'password'    => Hash::make('password'),
             'last_name'   => 'Сидоров',
             'first_name'  => 'Алексей',
             'middle_name' => 'Петрович',
-            'is_teacher'  => true,
+            'is_jobgiver'  => true,
         ]);
 
-        // Студенты
-        $student1 = User::create([
+        // Фрилансеры
+        $freelancer1 = User::create([
             'email'       => 'smirnov@edu.ugrasu.ru',
             'password'    => Hash::make('password'),
             'last_name'   => 'Смирнов',
@@ -92,7 +92,7 @@ class DatabaseSeeder extends Seeder
             'group_id'    => $g['ИВТ41б']->id,
         ]);
 
-        $student2 = User::create([
+        $freelancer2 = User::create([
             'email'       => 'kozlova@edu.ugrasu.ru',
             'password'    => Hash::make('password'),
             'last_name'   => 'Козлова',
@@ -101,7 +101,7 @@ class DatabaseSeeder extends Seeder
             'group_id'    => $g['ИВТ41б']->id,
         ]);
 
-        $student3 = User::create([
+        $freelancer3 = User::create([
             'email'       => 'novikov@edu.ugrasu.ru',
             'password'    => Hash::make('password'),
             'last_name'   => 'Новиков',
@@ -110,7 +110,7 @@ class DatabaseSeeder extends Seeder
             'group_id'    => $g['ПИ41б']->id,
         ]);
 
-        $student4 = User::create([
+        $freelancer4 = User::create([
             'email'       => 'fatao@edu.ugrasu.ru',
             'password'    => Hash::make('password'),
             'last_name'   => 'Abdulrahman',
@@ -119,48 +119,48 @@ class DatabaseSeeder extends Seeder
             'group_id'    => $g['ПИ41б']->id,
         ]);
 
-        // Дисциплины
+        // Заказы
         $math    = Discipline::create(['code' => 'МАТ101', 'name' => 'Высшая математика']);
         $prog    = Discipline::create(['code' => 'ПРО201', 'name' => 'Программирование']);
         $db      = Discipline::create(['code' => 'БД301',  'name' => 'Базы данных']);
         $physics = Discipline::create(['code' => 'ФИЗ101', 'name' => 'Физика']);
         $networks = Discipline::create(['code' => 'СЕТ401', 'name' => 'Компьютерные сети']);
 
-        // Привязка преподавателей к дисциплинам
-        $math->teachers()->attach($teacher1->id);
-        $prog->teachers()->attach($teacher1->id);
-        $db->teachers()->attach($teacher2->id);
-        $physics->teachers()->attach($teacher3->id);
-        $networks->teachers()->attach($teacher2->id);
+        // Привязка заказчиков к заказам
+        $math->jobgivers()->attach($jobgiver1->id);
+        $prog->jobgivers()->attach($jobgiver1->id);
+        $db->jobgivers()->attach($jobgiver2->id);
+        $physics->jobgivers()->attach($jobgiver3->id);
+        $networks->jobgivers()->attach($jobgiver2->id);
 
         // Задолженности
         $debt1 = Debt::create([
-            'student_id'     => $student1->id,
+            'freelancer_id'     => $freelancer1->id,
             'discipline_id'  => $math->id,
-            'assigned_by_id' => $teacher1->id,
+            'assigned_by_id' => $jobgiver1->id,
             'status'         => 'DEBT',
             'comment'        => 'Не явился на экзамен в зимнюю сессию',
         ]);
 
         $debt2 = Debt::create([
-            'student_id'     => $student2->id,
+            'freelancer_id'     => $freelancer2->id,
             'discipline_id'  => $prog->id,
-            'assigned_by_id' => $teacher1->id,
+            'assigned_by_id' => $jobgiver1->id,
             'status'         => 'DEBT',
             'comment'        => 'Не сдал курсовую работу',
         ]);
 
         $debt3 = Debt::create([
-            'student_id'     => $student3->id,
+            'freelancer_id'     => $freelancer3->id,
             'discipline_id'  => $db->id,
-            'assigned_by_id' => $teacher2->id,
+            'assigned_by_id' => $jobgiver2->id,
             'status'         => 'DEBT',
         ]);
 
         $debt4 = Debt::create([
-            'student_id'     => $student1->id,
+            'freelancer_id'     => $freelancer1->id,
             'discipline_id'  => $physics->id,
-            'assigned_by_id' => $teacher3->id,
+            'assigned_by_id' => $jobgiver3->id,
             'status'         => 'CLOSED',
             'grade_value'    => 4,
             'grade_scale'    => 'EXAM',
@@ -176,16 +176,16 @@ class DatabaseSeeder extends Seeder
             'start_datetime'   => now()->addDays(5)->setTime(10, 0),
             'duration_minutes' => 90,
             'status'           => 'SCHEDULED',
-            'created_by_id'    => $dean->id,
+            'created_by_id'    => $moderator->id,
         ]);
 
-        $retake->students()->attach($student1->id, ['result_status' => 'NOT_TAKEN']);
-        $retake->teachers()->attach($teacher1->id);
+        $retake->freelancers()->attach($freelancer1->id, ['result_status' => 'NOT_TAKEN']);
+        $retake->jobgivers()->attach($jobgiver1->id);
         $retake->debts()->attach($debt1->id);
 
         // Уведомления
         Notification::send(
-            $student1->id,
+            $freelancer1->id,
             Notification::TYPE_RETAKE_ASSIGNED,
             'Назначена пересдача',
             "Вам назначена пересдача по дисциплине «{$math->name}» на " .
@@ -194,7 +194,7 @@ class DatabaseSeeder extends Seeder
         );
 
         Notification::send(
-            $teacher1->id,
+            $jobgiver1->id,
             Notification::TYPE_RETAKE_ASSIGNED,
             'Назначена пересдача',
             "Вы назначены преподавателем на пересдачу по дисциплине «{$math->name}».",
@@ -207,14 +207,14 @@ class DatabaseSeeder extends Seeder
             ['Роль', 'Email', 'Пароль'],
             [
                 ['Администратор', 'admin@edu.ugrasu.ru',   'password'],
-                ['Деканат',       'dean@edu.ugrasu.ru',    'password'],
-                ['Преподаватель', 'ivanov@edu.ugrasu.ru',  'password'],
-                ['Преподаватель', 'petrova@edu.ugrasu.ru', 'password'],
-                ['Студент',       'smirnov@edu.ugrasu.ru', 'password'],
-                ['Студент',       'kozlova@edu.ugrasu.ru', 'password'],
-                ['Студент',       'sidorov@edu.ugrasu.ru', 'password'],
-                ['Студент',       'fatao@edu.ugrasu.ru',   'password'],
-                ['Студент',       'novikov@edu.ugrasu.ru', 'password'],
+                ['Модератор',       'moderator@edu.ugrasu.ru',    'password'],
+                ['Заказчик', 'ivanov@edu.ugrasu.ru',  'password'],
+                ['Заказчик', 'petrova@edu.ugrasu.ru', 'password'],
+                ['Фрилансер',       'smirnov@edu.ugrasu.ru', 'password'],
+                ['Фрилансер',       'kozlova@edu.ugrasu.ru', 'password'],
+                ['Фрилансер',       'sidorov@edu.ugrasu.ru', 'password'],
+                ['Фрилансер',       'fatao@edu.ugrasu.ru',   'password'],
+                ['Фрилансер',       'novikov@edu.ugrasu.ru', 'password'],
             ]
         );
     }
