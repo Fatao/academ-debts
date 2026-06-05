@@ -7,7 +7,7 @@ use App\Models\{Debt, Retake, User, Discipline, Group, RetakeChangeRequest, Noti
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
-class DeanController extends Controller
+class ModeratorController extends Controller
 {
     public function dashboard()
     {
@@ -16,10 +16,10 @@ class DeanController extends Controller
         $totalRetakes  = Retake::count();
         $pendingRequests = RetakeChangeRequest::where('status', 'PENDING')->count();
 
-        $recentDebts = Debt::with('student', 'discipline', 'assignedBy')
+        $recentDebts = Debt::with('freelancer', 'discipline', 'assignedBy')
             ->latest()->take(8)->get();
 
-        return view('dean.dashboard', compact(
+        return view('moderator.dashboard', compact(
             'totalDebts', 'closedDebts', 'totalRetakes',
             'pendingRequests', 'recentDebts'
         ));
@@ -27,23 +27,23 @@ class DeanController extends Controller
 
     public function debts()
     {
-        $debts = Debt::with('student.group', 'discipline', 'assignedBy')
+        $debts = Debt::with('freelancer.group', 'discipline', 'assignedBy')
             ->latest()->get();
 
         $groups     = Group::orderBy('name')->get();
         $disciplines = Discipline::orderBy('name')->get();
 
-        return view('dean.debts', compact('debts', 'groups', 'disciplines'));
+        return view('moderator.debts', compact('debts', 'groups', 'disciplines'));
     }
 
     public function retakes()
     {
-        $retakes = Retake::with('discipline', 'teachers', 'students', 'createdBy')
+        $retakes = Retake::with('discipline', 'jobgivers', 'freelancers', 'createdBy')
             ->orderByDesc('start_datetime')->get();
 
         foreach ($retakes as $r) { $r->syncStatus(); }
 
-        return view('dean.retakes.index', compact('retakes'));
+        return view('moderator.retakes.index', compact('retakes'));
     }
 
 
@@ -52,17 +52,17 @@ class DeanController extends Controller
     public function createRetake()
    {
     $disciplines  = Discipline::orderBy('name')->get();
-    $teachers     = User::where('is_teacher', true)->orderBy('last_name')->get();
-    $students     = User::where('is_teacher', false)
-                        ->where('is_dean', false)
+    $jobgivers     = User::where('is_jobgiver', true)->orderBy('last_name')->get();
+    $freelancers     = User::where('is_jobgiver', false)
+                        ->where('is_moderator', false)
                         ->where('is_admin', false)
                         ->with('group')
                         ->orderBy('last_name')
                         ->get();
     $groupsByYear = \App\Models\Group::orderBy('name')->get()->groupBy('year');
 
-    return view('dean.retakes.create', compact(
-        'disciplines', 'teachers', 'students', 'groupsByYear'
+    return view('moderator.retakes.create', compact(
+        'disciplines', 'jobgivers', 'freelancers', 'groupsByYear'
     ));
     }
     
@@ -77,24 +77,24 @@ class DeanController extends Controller
             'room_number'      => ['required', 'string', 'max:20'],
             'start_datetime'   => ['required', 'date', 'after:now'],
             'duration_minutes' => ['required', 'integer', 'min:15'],
-            'teacher_ids'      => ['required', 'array', 'min:1'],
-            'teacher_ids.*'    => ['exists:users,id'],
-            'student_ids'      => ['required', 'array', 'min:1'],
-            'student_ids.*'    => ['exists:users,id'],
+            'jobgiver_ids'      => ['required', 'array', 'min:1'],
+            'jobgiver_ids.*'    => ['exists:users,id'],
+            'freelancer_ids'      => ['required', 'array', 'min:1'],
+            'freelancer_ids.*'    => ['exists:users,id'],
         ], [
-            'discipline_id.required'   => 'Выберите дисциплину.',
-            'type.required'            => 'Выберите тип пересдачи.',
-            'building_number.required' => 'Укажите номер корпуса.',
-            'room_number.required'     => 'Укажите номер аудитории.',
-            'start_datetime.required'  => 'Укажите дату и время.',
+            'discipline_id.required'   => 'Выберите заказ.',
+            'type.required'            => 'Выберите тип.',
+            'building_number.required' => 'Укажите номер корпуса(надо?).',
+            'room_number.required'     => 'Укажите номер аудитории(надо?).',
+            'start_datetime.required'  => 'Укажите дату и время дедлайна.',
             'start_datetime.after'     => 'Дата должна быть в будущем.',
             'duration_minutes.required'=> 'Укажите продолжительность.',
-            'teacher_ids.required'     => 'Выберите хотя бы одного преподавателя.',
-            'student_ids.required'     => 'Выберите хотя бы одного студента.',
+            'jobgiver_ids.required'     => 'Выберите хотя бы одного заказчика.',
+            'freelancer_ids.required'     => 'Выберите хотя бы одного фрилансера.',
         ]);
 
-        if ($request->type === 'COMMISSION' && count($request->teacher_ids) < 3) {
-            return back()->withErrors(['teacher_ids' => 'При пересдаче с комиссией необходимо назначить минимум 3 преподавателей.'])->withInput();
+        if ($request->type === 'COMMISSION' && count($request->jobgiver_ids) < 3) {
+            return back()->withErrors(['jobgiver_ids' => 'При пересдаче с комиссией необходимо назначить минимум 3 преподавателей.(надо?)'])->withInput();
         }
 
         $retake = Retake::create([
@@ -108,17 +108,17 @@ class DeanController extends Controller
             'created_by_id'    => Auth::id(),
         ]);
 
-        $retake->teachers()->attach($request->teacher_ids);
+        $retake->jobgivers()->attach($request->jobgiver_ids);
 
-        $studentData = collect($request->student_ids)->mapWithKeys(fn($id) => [
+        $freelancerData = collect($request->freelancer_ids)->mapWithKeys(fn($id) => [
             $id => ['result_status' => 'NOT_TAKEN']
         ])->toArray();
-        $retake->students()->attach($studentData);
+        $retake->freelancers()->attach($freelancerData);
 
         $discipline = Discipline::find($request->discipline_id);
         $dateStr = \Carbon\Carbon::parse($request->start_datetime)->format('d.m.Y в H:i');
 
-        foreach ($request->student_ids as $sid) {
+        foreach ($request->freelancer_ids as $sid) {
             Notification::send($sid, Notification::TYPE_RETAKE_ASSIGNED,
                 'Назначена пересдача',
                 "Вам назначена пересдача по дисциплине «{$discipline->name}» на {$dateStr}. Место: корп. {$request->building_number}, ауд. {$request->room_number}.",
@@ -126,7 +126,7 @@ class DeanController extends Controller
             );
         }
 
-        foreach ($request->teacher_ids as $tid) {
+        foreach ($request->jobgiver_ids as $tid) {
             Notification::send($tid, Notification::TYPE_RETAKE_ASSIGNED,
                 'Назначена пересдача',
                 "Вы назначены на пересдачу по дисциплине «{$discipline->name}» на {$dateStr}.",
@@ -134,7 +134,7 @@ class DeanController extends Controller
             );
         }
 
-        return redirect()->route('dean.retakes.index')->with('success', 'Пересдача успешно назначена.');
+        return redirect()->route('moderator.retakes.index')->with('success', 'Пересдача успешно назначена.');
     }
 
     public function requests()
@@ -143,22 +143,22 @@ class DeanController extends Controller
             ->orderByRaw("FIELD(status, 'PENDING', 'APPROVED', 'REJECTED')")
             ->latest()->get();
 
-        return view('dean.requests', compact('requests'));
+        return view('moderator.requests', compact('requests'));
     }
 
     public function reviewRequest(Request $request, RetakeChangeRequest $changeRequest)
     {
         $request->validate([
             'decision'     => ['required', 'in:APPROVED,REJECTED'],
-            'dean_comment' => ['required_if:decision,REJECTED', 'nullable', 'string', 'max:500'],
+            'moderator_comment' => ['required_if:decision,REJECTED', 'nullable', 'string', 'max:500'],
         ], [
             'decision.required'          => 'Выберите решение.',
-            'dean_comment.required_if'   => 'При отклонении необходимо указать причину.',
+            'moderator_comment.required_if'   => 'При отклонении необходимо указать причину.',
         ]);
 
         $changeRequest->update([
             'status'        => $request->decision,
-            'dean_comment'  => $request->dean_comment,
+            'moderator_comment'  => $request->moderator_comment,
             'reviewed_by_id'=> Auth::id(),
             'reviewed_at'   => now(),
         ]);
@@ -178,7 +178,7 @@ class DeanController extends Controller
             $notifMsg  = "Ваша заявка на изменение пересдачи была одобрена.";
         } else {
             $notifType = Notification::TYPE_REQUEST_REJECTED;
-            $notifMsg  = "Ваша заявка на изменение пересдачи была отклонена. Причина: {$request->dean_comment}";
+            $notifMsg  = "Ваша заявка на изменение пересдачи была отклонена. Причина: {$request->moderator_comment}";
         }
 
         Notification::send($changeRequest->requested_by_id, $notifType,
@@ -192,7 +192,7 @@ class DeanController extends Controller
 
     public function reports()
     {
-        return view('dean.reports');
+        return view('moderator.reports');
     }
 
     public function exportCsv(Request $request)
@@ -200,7 +200,7 @@ class DeanController extends Controller
         $from = $request->from ?? now()->startOfMonth()->format('Y-m-d');
         $to   = $request->to   ?? now()->format('Y-m-d');
 
-        $retakes = Retake::with('discipline', 'students')
+        $retakes = Retake::with('discipline', 'freelancers')
             ->whereBetween('start_datetime', [$from, $to . ' 23:59:59'])
             ->where('status', 'COMPLETED')
             ->get();
@@ -211,17 +211,17 @@ class DeanController extends Controller
             fputcsv($handle, ['Дисциплина', 'Дата', 'Тип', 'Студентов', 'Сдали', 'Не сдали', 'Средняя оценка'], ';');
 
             foreach ($retakes as $retake) {
-                $students = $retake->students;
-                $passed   = $students->where('pivot.result_status', 'PASSED')->count();
-                $failed   = $students->where('pivot.result_status', 'FAILED')->count();
-                $grades   = $students->whereNotNull('pivot.grade_value')->pluck('pivot.grade_value');
+                $freelancers = $retake->freelancers;
+                $passed   = $freelancers->where('pivot.result_status', 'PASSED')->count();
+                $failed   = $freelancers->where('pivot.result_status', 'FAILED')->count();
+                $grades   = $freelancers->whereNotNull('pivot.grade_value')->pluck('pivot.grade_value');
                 $avg      = $grades->count() ? number_format($grades->average(), 2, ',', '') : '—';
 
                 fputcsv($handle, [
                     $retake->discipline->name,
                     $retake->start_datetime->format('d.m.Y'),
                     $retake->typeLabel(),
-                    $students->count(),
+                    $freelancers->count(),
                     $passed,
                     $failed,
                     $avg,
