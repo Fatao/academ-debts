@@ -40,7 +40,7 @@
                         Заявка будет рассмотрена деканатом. После одобрения вы получите
                         доступ к функциям преподавателя.
                     </p>
-                    <form method="POST" action="{{ route('student.request-role.store') }}">
+                    <form method="POST" action="{{ route('freelancer.request-role.store') }}">
                         @csrf
                         <div class="mb-3">
                             <label class="form-label">Комментарий (необязательно)</label>
