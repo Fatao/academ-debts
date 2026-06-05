@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Регистрация — Система учёта задолженностей</title>
+    <title>Регистрация — Маркетплейс для фриланса</title>
     <link rel="stylesheet" href="{{ asset('build/assets/' . basename(glob(public_path('build/assets/app-*.css'))[0])) }}">
     <style>
         html, body { height: 100%; margin: 0; }
@@ -59,7 +59,7 @@
             </div>
         @endif
         <div style="font-size:13px;color:#6c757d;">
-            Система учёта академических задолженностей
+            Маркетплейс для фриланса
         </div>
     </div>
 
@@ -122,21 +122,21 @@
                         <div class="d-flex gap-4">
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="role"
-                                       id="role_student" value="student"
-                                       {{ old('role', 'student') === 'student' ? 'checked' : '' }}>
-                                <label class="form-check-label" for="role_student">Студент</label>
+                                       id="role_freelancer" value="freelancer"
+                                       {{ old('role', 'freelancer') === 'freelancer' ? 'checked' : '' }}>
+                                <label class="form-check-label" for="role_freelancer">Студент</label>
                             </div>
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="role"
-                                       id="role_teacher" value="teacher"
-                                       {{ old('role') === 'teacher' ? 'checked' : '' }}>
-                                <label class="form-check-label" for="role_teacher">Преподаватель</label>
+                                       id="role_jobgiver" value="jobgiver"
+                                       {{ old('role') === 'jobgiver' ? 'checked' : '' }}>
+                                <label class="form-check-label" for="role_jobgiver">Преподаватель</label>
                             </div>
                         </div>
                     </div>
 
-                    {{-- Секция студента --}}
-                    <div id="student-section">
+                    {{-- Секция фрилансера --}}
+                    <div id="freelancer-section">
                         <div class="mb-3">
                             <label class="form-label">Курс обучения</label>
                             <select id="year-select" class="form-select">
@@ -182,8 +182,8 @@
         </div>
 
         <p class="text-center text-muted mt-3" style="font-size:12px;">
-            После регистрации студенты получают доступ сразу.<br>
-            Преподаватели — после подтверждения администратором.
+            После регистрации фрилансеры получают доступ сразу.<br>
+            Работодатели — после подтверждения администратором.
         </p>
     </div>
 
@@ -202,12 +202,12 @@ const groupsByYear = @json($groupsByYear);
 const yearSelect     = document.getElementById('year-select');
 const groupSection   = document.getElementById('group-section');
 const groupSelect    = document.getElementById('group-select');
-const studentSection = document.getElementById('student-section');
+const freelancerSection = document.getElementById('freelancer-section');
 const roleInputs     = document.querySelectorAll('input[name="role"]');
 
-function toggleStudentSection() {
-    const isStudent = document.querySelector('input[name="role"]:checked')?.value === 'student';
-    studentSection.style.display = isStudent ? 'block' : 'none';
+function toggleFreelancerSection() {
+    const isFreelancer = document.querySelector('input[name="role"]:checked')?.value === 'freelancer';
+    freelancerSection.style.display = isFreelancer ? 'block' : 'none';
 }
 
 function updateGroups() {
@@ -226,9 +226,9 @@ function updateGroups() {
     }
 }
 
-roleInputs.forEach(r => r.addEventListener('change', toggleStudentSection));
+roleInputs.forEach(r => r.addEventListener('change', toggleFreelancerSection));
 yearSelect.addEventListener('change', updateGroups);
-toggleStudentSection();
+toggleFreelancerSection();
 
 @if(old('year'))
     yearSelect.value = '{{ old('year') }}';
